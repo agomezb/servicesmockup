@@ -1,5 +1,0 @@
-[client]
-database=test
-user=root
-password=root
-default-character-set=utf8

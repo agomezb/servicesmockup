@@ -270,6 +270,6 @@ fabric.properties
 /venv/
 /env/
 /.idea/
-/config/my.cnf
+/config/settings.py
 */*/migrations/*
 !*/*/migrations/__init__.py/
