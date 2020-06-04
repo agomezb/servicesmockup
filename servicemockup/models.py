@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -49,6 +48,9 @@ class Persona(BaseModel):
 
     extranjero = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '{} {}'.format(self.identificacion, self.nombre)
+
 
 class Producto(BaseModel):
     ACTIVO = 'A'
@@ -68,16 +70,18 @@ class Producto(BaseModel):
     categoria = models.CharField(max_length=50)
     estado = models.CharField(max_length=1, choices=ESTADOS, default=ACTIVO)
 
+    def __str__(self):
+        return self.nombre
+
 
 class Venta(BaseModel):
     persona = models.ForeignKey(Persona, on_delete=models.PROTECT, related_name='+')
-    fecha_hora_venta = models.DateTimeField(default=timezone.now)
+    fecha = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.PROTECT, related_name='+')
 
 
 class DetalleVenta(BaseModel):
-
-    venta = models.ForeignKey(Venta, on_delete=models.PROTECT)
+    venta = models.ForeignKey(Venta, on_delete=models.PROTECT, related_name='detalles')
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidad = models.PositiveSmallIntegerField(default=0)
     descripcion = models.CharField(max_length=200)

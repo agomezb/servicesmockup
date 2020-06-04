@@ -2,11 +2,17 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db.transaction import atomic
 from rest_framework import serializers
 
-from servicemockup.models import Persona, DetalleVenta, Venta
+from servicemockup.models import Persona, DetalleVenta, Venta, Producto
 
 
 class SincronizacionException(Exception):
     pass
+
+
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = ('id', 'nombre', 'codigo', 'descripcion', 'stock', 'precio', 'iva', 'categoria', 'estado')
 
 
 class PersonaSerializer(serializers.ModelSerializer):
@@ -18,6 +24,17 @@ class PersonaSerializer(serializers.ModelSerializer):
                 'validators': [UnicodeUsernameValidator()],
             }
         }
+
+    @staticmethod
+    def generate(data):
+        if 'id' in data and data['id']:
+            cliente = Persona.objects.get(pk=data['id'])
+        else:
+            cliente = Persona.objects.filter(identificacion=data.get("identificacion")).first()
+        if cliente:
+            # TODO REVISAR SI ACTUALIZAR DATOS DE PERSONA
+            return cliente
+        return Persona.objects.create(**data)
 
 
 class DetalleVentaSerializer(serializers.ModelSerializer):
@@ -50,7 +67,7 @@ class VentaSerializer(serializers.ModelSerializer):
             detalles = validated_data.pop('detalles')
             venta = Venta.objects.create(persona=persona, **validated_data)
             for detalledata in detalles:
-                DetalleVentaSerializer.generate(request, venta, detalledata)
+                DetalleVentaSerializer.generate(venta, detalledata)
         except SincronizacionException as e:
             raise serializers.ValidationError({'detail': str(e)})
 
@@ -58,5 +75,7 @@ class VentaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Venta
-        fields = ('id', 'detalles', 'persona')
-
+        fields = ('id', 'detalles', 'persona', 'fecha')
+        extra_kwargs = {
+            'fecha': {'required': False}
+        }
