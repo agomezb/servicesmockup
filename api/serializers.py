@@ -75,7 +75,7 @@ class VentaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Venta
-        fields = ('id', 'detalles', 'persona', 'fecha')
+        fields = ('id', 'detalles', 'persona', 'fecha', 'referencia')
         extra_kwargs = {
             'fecha': {'required': False}
         }

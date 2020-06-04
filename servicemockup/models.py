@@ -78,6 +78,7 @@ class Venta(BaseModel):
     persona = models.ForeignKey(Persona, on_delete=models.PROTECT, related_name='+')
     fecha = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.PROTECT, related_name='+')
+    referencia = models.CharField(max_length=20)
 
 
 class DetalleVenta(BaseModel):
