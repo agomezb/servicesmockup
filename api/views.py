@@ -1,4 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from api import serializers
 from servicemockup.models import Venta, Producto
 
@@ -25,3 +28,14 @@ class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
         if filtro:
             queryset = queryset.filter(nombre__icontains=filtro)
         return queryset.order_by('-nombre')
+
+
+class VerificarVentaView(APIView):
+
+    def get(self, request):
+        referencia = self.request.query_params.get('referencia', None)
+        ventaquery = Venta.objects.filter(referencia=referencia)
+        if ventaquery:
+            venta = ventaquery[0]
+            return Response({'id': venta.id})
+        return Response({'detail':'No existe venta'}, status=status.HTTP_404_NOT_FOUND)
