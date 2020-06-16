@@ -39,6 +39,8 @@ class PersonaSerializer(serializers.ModelSerializer):
 
 class DetalleVentaSerializer(serializers.ModelSerializer):
 
+    producto_nombre = serializers.ReadOnlyField(source='producto.nombre')
+
     @staticmethod
     def generate(venta, validated_data):
         boleto = DetalleVenta.objects.create(venta=venta, **validated_data)
