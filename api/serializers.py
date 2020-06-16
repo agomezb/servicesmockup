@@ -52,7 +52,8 @@ class DetalleVentaSerializer(serializers.ModelSerializer):
             'id',
             'producto',
             'cantidad',
-            'descripcion'
+            'descripcion',
+            'producto_nombre'
         )
 
 
